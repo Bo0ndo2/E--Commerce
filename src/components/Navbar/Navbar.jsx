@@ -6,13 +6,13 @@ import { useState } from 'react';
 import { useAuth } from '../Auth/AuthContext';
 const Navbar = () => {
   // const { state } = useCart();
-  const {isAuthenticated , logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   // const { showToast } = useToast();
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
 
 
-  
+
   const handleLogout = () => {
     logout();
     setShowUserMenu(false);
@@ -24,7 +24,7 @@ const Navbar = () => {
     <nav className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white shadow-2xl sticky top-0 z-50 border-b-4 border-blue-500">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          
+
           {/* Logo */}
           <Link to="/" className="text-2xl font-bold hover:text-blue-400 transition-all duration-300 transform hover:scale-105">
             🛍️ ShopHub
@@ -46,31 +46,31 @@ const Navbar = () => {
             </Link>
 
             {/* Cart Link with Badge */}
-            {/* <Link
+             <Link
               to="/cart"
               className="relative text-gray-100 hover:text-blue-400 transition-all duration-300 font-semibold text-lg"
             >
               <span className="flex items-center gap-2 hover:underline decoration-2 underline-offset-4">
                 🛒 Cart
-                {state.totalItems > 0 && (
+                {/* {state.totalItems > 0 && ( */}
                   <span className="absolute -top-3 -right-3 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center shadow-lg animate-pulse">
-                    {state.totalItems}
+                    {/* {state.totalItems} */}
                   </span>
-                )}
+                {/* )} */}
               </span>
-            </Link> */}
+            </Link> 
 
             {/* Auth Section */}
-            
+
             {isAuthenticated ? (
               /* User Menu */
-              <div className="relative">
+              <div className="relativ z-50">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full transition-all duration-300 font-semibold shadow-lg"
                 >
                   <span className="text-xl">👤</span>
-                  <span>{user?.username}</span>
+                  {/* <span>{user?.username}</span> */}
                   <span className={`transition-transform duration-300 ${showUserMenu ? 'rotate-180' : ''}`}>
                     ▼
                   </span>
@@ -80,8 +80,8 @@ const Navbar = () => {
                 {showUserMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-2xl py-2 text-gray-800">
                     <div className="px-4 py-2 border-b border-gray-200">
-                      <p className="font-semibold">{user?.username}</p>
-                      <p className="text-sm text-gray-500 truncate">{user?.email}</p>
+                      {/* <p className="font-semibold">{user?.username}</p>
+                      <p className="text-sm text-gray-500 truncate">{user?.email}</p> */}
                     </div>
 
                     <Link

@@ -1,24 +1,12 @@
-import { createContext, useContext, useState, type ReactNode, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback } from 'react';
+import React from 'react';
 
-type ToastType = 'success' | 'error' | 'info' | 'warning';
+const ToastContext = createContext(undefined);
 
-interface Toast {
-  id: number;
-  message: string;
-  type: ToastType;
-}
+export const ToastProvider = ({ children }) => {
+  const [toasts, setToasts] = useState([]);
 
-interface ToastContextType {
-  showToast: (message: string, type?: ToastType) => void;
-}
-
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
-
-
-export const ToastProvider = ({ children }: { children: ReactNode }) => {
-  const [toasts, setToasts] = useState<Toast[]>([]);
-
-  const showToast = useCallback((message: string, type: ToastType = 'info') => {
+  const showToast = useCallback((message, type = 'info') => {
     const id = Date.now();
     setToasts(prev => [...prev, { id, message, type }]);
 
@@ -28,11 +16,11 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     }, 3000);
   }, []);
 
-  const removeToast = (id: number) => {
+  const removeToast = (id) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
-  const getToastStyles = (type: ToastType) => {
+  const getToastStyles = (type) => {
     switch (type) {
       case 'success':
         return 'bg-green-500 text-white';
@@ -45,7 +33,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const getToastIcon = (type: ToastType) => {
+  const getToastIcon = (type) => {
     switch (type) {
       case 'success':
         return '✅';
@@ -61,7 +49,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      
+
       {/* Toast Container */}
       <div className="fixed top-20 right-4 z-[100] space-y-3">
         {toasts.map(toast => (
@@ -102,7 +90,6 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     </ToastContext.Provider>
   );
 };
-
 
 export const useToast = () => {
   const context = useContext(ToastContext);

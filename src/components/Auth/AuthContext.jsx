@@ -5,13 +5,15 @@ import { useNavigate } from 'react-router-dom';
 const AuthContext = createContext(null);
 
 export function AuthContextProvider({ children }) {
-  const navigate = useNavigate();
 
   const [token, setToken] = useState(
     localStorage.getItem('userToken') || null
   );
 
   const isAuthenticated = !!token;
+
+  // Mock user for demo purposes since the API token might be opaque
+  const user = isAuthenticated ? { id: 2, email: 'user@example.com' } : null;
 
   function saveUser(token) {
     localStorage.setItem('userToken', token);
@@ -24,7 +26,7 @@ export function AuthContextProvider({ children }) {
 
 
   return (
-    <AuthContext.Provider value={{ token, setToken, saveUser, isAuthenticated, logout }}>
+    <AuthContext.Provider value={{ token, setToken, saveUser, isAuthenticated, logout, user }}>
       {children}
     </AuthContext.Provider>
   );

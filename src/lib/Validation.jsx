@@ -33,3 +33,32 @@ export const loginSchema = Yup.object().shape({
     .min(8, 'Password must be at least 8 characters')
     .required('Password is required'),
 });
+
+export const checkoutSchema = Yup.object({
+  fullName: Yup.string()
+    .min(3, 'Name must be at least 3 characters')
+    .required('Full name is required'),
+
+  email: Yup.string()
+    .email('Invalid email address')
+    .required('Email is required'),
+
+  address: Yup.string()
+    .min(5, 'Address must be at least 5 characters')
+    .required('Address is required'),
+
+  city: Yup.string()
+    .required('City is required'),
+
+  postalCode: Yup.string()
+    .required('Postal code is required'),
+
+  cardNumber: Yup.string()
+    .required('Card number is required'),
+
+  expiryDate: Yup.string()
+    .required('Expiry date is required'),
+
+  cvv: Yup.string()
+    .required('CVV is required'),
+});
