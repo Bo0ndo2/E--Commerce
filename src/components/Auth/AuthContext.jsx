@@ -10,18 +10,32 @@ export function AuthContextProvider({ children }) {
     localStorage.getItem('userToken') || null
   );
 
+  const [userInfo, setUserInfo] = useState(() => {
+    const saved = localStorage.getItem('userInfo');
+    return saved ? JSON.parse(saved) : null;
+  });
+
   const isAuthenticated = !!token;
 
-  // Mock user for demo purposes since the API token might be opaque
-  const user = isAuthenticated ? { id: 2, email: 'user@example.com' } : null;
+  // Derive user object. If we have userInfo, use it. 
+  // We generate a simpler numeric ID from the email for compatibility with existing string keys.
+  const user = isAuthenticated && userInfo ? {
+    id: userInfo.email, // Use email as ID directly for consistency in keys
+    email: userInfo.email
+  } : null;
 
-  function saveUser(token) {
+  function saveUser(token, userData) {
     localStorage.setItem('userToken', token);
+    localStorage.setItem('userInfo', JSON.stringify(userData));
     setToken(token);
+    setUserInfo(userData);
   }
+
   function logout() {
     localStorage.removeItem('userToken');
+    localStorage.removeItem('userInfo');
     setToken(null);
+    setUserInfo(null);
   }
 
 

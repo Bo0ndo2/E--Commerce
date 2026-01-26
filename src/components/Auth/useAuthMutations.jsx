@@ -11,8 +11,9 @@ export function useLogin() {
 
   return useMutation({
     mutationFn: loginApi,
-    onSuccess: (res) => {
-      saveUser(res.data.token);
+    onSuccess: (res, variables) => {
+      // Save token AND email so we can distinguish users
+      saveUser(res.data.token, { email: variables.email });
       navigate('/');
     },
   });
@@ -24,8 +25,8 @@ export function useRegister() {
 
   return useMutation({
     mutationFn: registerApi,
-    onSuccess: (res) => {
-      saveUser(res.data.token);
+    onSuccess: (res, variables) => {
+      saveUser(res.data.token, { email: variables.email });
       navigate('/');
     },
   });
