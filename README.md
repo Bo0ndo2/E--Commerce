@@ -3,8 +3,7 @@
 A modern, fully functional e-commerce web application built with **React** . This project demonstrates a complete shopping flow including authentication, product browsing, cart management, checkout with validation, and order history persistence.
 
 ## 🚀 Live Demo
-*(Add your Vercel/Netlify link here)*
-
+https://e-commerce1-livid-delta.vercel.app
 ## ✨ Features
 
 - **Product Catalog**: Dynamic product listing with search, category filtering, and sorting.
