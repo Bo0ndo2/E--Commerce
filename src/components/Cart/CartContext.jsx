@@ -11,8 +11,32 @@ export const CartContext = createContext();
 
 export default function CartContextProvider({ children }) {
   const { showToast } = useToast();
-  // Local state for cart to make it work with stateless FakeStoreAPI
-  const [cartItems, setCartItems] = useState([]);
+  const { user } = useAuth();
+
+  // Local state for cart with persistence
+  const [cartItems, setCartItems] = useState(() => {
+    // Initial load attempt (though user might be null initially, handled in effect)
+    const userId = user?.id || 'guest';
+    const savedCart = localStorage.getItem(`cart_${userId}`);
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
+  // Sync cart with User ID changes (Login/Logout)
+  useEffect(() => {
+    const userId = user?.id || 'guest';
+    const savedCart = localStorage.getItem(`cart_${userId}`);
+    if (savedCart) {
+      setCartItems(JSON.parse(savedCart));
+    } else {
+      setCartItems([]);
+    }
+  }, [user]);
+
+  // Persist cart to localStorage whenever it changes
+  useEffect(() => {
+    const userId = user?.id || 'guest';
+    localStorage.setItem(`cart_${userId}`, JSON.stringify(cartItems));
+  }, [cartItems, user]);
 
   // Calculate total price
   const totalCartPrice = cartItems.reduce((total, item) => {
