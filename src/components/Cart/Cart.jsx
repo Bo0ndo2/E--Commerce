@@ -36,7 +36,7 @@ export default function Cart() {
         </h3>
         <button
           onClick={() => navigate('/checkout')}
-          className="w-full mt-4 bg-primary text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
+          className="w-full mt-4 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
         >
           Checkout
         </button>

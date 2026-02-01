@@ -1,9 +1,9 @@
-import React from 'react'
+import React from "react";
 
-import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthContext';
-import { loginApi, registerApi } from './auth.api';
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
+import { loginApi, registerApi } from "./auth.api";
 
 export function useLogin() {
   const navigate = useNavigate();
@@ -11,10 +11,10 @@ export function useLogin() {
 
   return useMutation({
     mutationFn: loginApi,
-    onSuccess: (res, variables) => {
-      // Save token AND email so we can distinguish users
-      saveUser(res.data.token, { email: variables.email });
-      navigate('/');
+    onSuccess: (res) => {
+      // Save token and the full user object from the API response
+      saveUser(res.data.token, res.data.user);
+      navigate("/");
     },
   });
 }
@@ -25,9 +25,9 @@ export function useRegister() {
 
   return useMutation({
     mutationFn: registerApi,
-    onSuccess: (res, variables) => {
-      saveUser(res.data.token, { email: variables.email });
-      navigate('/');
+    onSuccess: (res) => {
+      saveUser(res.data.token, res.data.user);
+      navigate("/");
     },
   });
 }

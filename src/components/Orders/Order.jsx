@@ -1,13 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../Auth/AuthContext';
-import React from 'react'
-/**
- * Orders Component
- * - عرض طلبات المستخدم
- * - Order History
- * - Order Status Tracking
- */
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Auth/AuthContext";
+import { getOrders } from "../Checkout/checkoutAPi";
+import React from "react";
+
 const Orders = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -15,53 +11,45 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load orders from localStorage
     const loadOrders = () => {
+      console.log("Order.jsx: loading all orders...");
       setLoading(true);
-      const savedOrders = localStorage.getItem(`orders_${user?.id}`);
-      if (savedOrders) {
-        try {
-          const parsedOrders = JSON.parse(savedOrders);
-          setOrders(parsedOrders);
-        } catch (error) {
-          console.error('Error loading orders:', error);
-        }
-      }
+      const parsedOrders = getOrders();
+      console.log("Order.jsx: loaded orders:", parsedOrders);
+      setOrders(parsedOrders);
       setLoading(false);
     };
 
-    if (user?.id) {
-      loadOrders();
-    }
-  }, [user]);
+    loadOrders();
+  }, []);
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'processing':
-        return 'bg-blue-100 text-blue-800';
-      case 'shipped':
-        return 'bg-purple-100 text-purple-800';
-      case 'delivered':
-        return 'bg-green-100 text-green-800';
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "processing":
+        return "bg-blue-100 text-blue-800";
+      case "shipped":
+        return "bg-purple-100 text-purple-800";
+      case "delivered":
+        return "bg-green-100 text-green-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'pending':
-        return '⏳';
-      case 'processing':
-        return '📦';
-      case 'shipped':
-        return '🚚';
-      case 'delivered':
-        return '✅';
+      case "pending":
+        return "⏳";
+      case "processing":
+        return "📦";
+      case "shipped":
+        return "🚚";
+      case "delivered":
+        return "✅";
       default:
-        return '📋';
+        return "📋";
     }
   };
 
@@ -87,10 +75,11 @@ const Orders = () => {
               No Orders Yet
             </h2>
             <p className="text-gray-600 mb-8">
-              You haven't placed any orders yet. Start shopping to see your order history here!
+              You haven't placed any orders yet. Start shopping to see your
+              order history here!
             </p>
             <button
-              onClick={() => navigate('/products')}
+              onClick={() => navigate("/products")}
               className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               Start Shopping
@@ -112,7 +101,7 @@ const Orders = () => {
 
         {/* Orders List */}
         <div className="space-y-6">
-          {orders.map(order => (
+          {orders.map((order) => (
             <div
               key={order.id}
               className="bg-white rounded-lg shadow-xl overflow-hidden transition-shadow duration-300"
@@ -127,17 +116,20 @@ const Orders = () => {
                   <div>
                     <p className="text-sm text-gray-600">Date</p>
                     <p className="font-semibold text-gray-800">
-                      {new Date(order.date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
+                      {new Date(order.date).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
                       })}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Total</p>
                     <p className="font-bold text-blue-600 text-xl">
-                      ${typeof order.total === 'number' ? order.total.toFixed(2) : order.total}
+                      $
+                      {typeof order.total === "number"
+                        ? order.total.toFixed(2)
+                        : order.total}
                     </p>
                   </div>
                   <div>
@@ -153,9 +145,11 @@ const Orders = () => {
 
               {/* Order Items */}
               <div className="p-6">
-                <h3 className="font-semibold text-gray-800 mb-4">Items ({order.items.length})</h3>
+                <h3 className="font-semibold text-gray-800 mb-4">
+                  Items ({order.items.length})
+                </h3>
                 <div className="space-y-4">
-                  {order.items.map(item => (
+                  {order.items.map((item) => (
                     <div
                       key={item.id}
                       className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg"
