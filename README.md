@@ -4,6 +4,19 @@ A modern, fully functional e-commerce web application built with **React** . Thi
 
 ## 🚀 Live Demo
 https://e-commerce1-livid-delta.vercel.app
+
+## 🔐 Demo Login Accounts (Local DB)
+
+The login page is configured to authenticate with the following fixed demo users.
+
+| Name | Email | Password |
+| --- | --- | --- |
+| Ahmed Demo | ahmed.demo@bondokshop.com | Ahmed@12345 |
+| Sara Demo | sara.demo@bondokshop.com | Sara@12345 |
+| Omar Demo | omar.demo@bondokshop.com | Omar@12345 |
+
+Only these accounts can sign in through the login form.
+
 ## ✨ Features
 
 - **Product Catalog**: Dynamic product listing with search, category filtering, and sorting.
