@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../Cart/CartContext";
-import { useAuth } from "../Auth/AuthContext";
+import { useAuth } from "../Auth/useAuth";
 import { useToast } from "../Toast/Toast";
 import React from "react";
 

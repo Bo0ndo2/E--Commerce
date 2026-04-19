@@ -1,18 +1,18 @@
-import React from "react";
 import { useEffect } from "react";
 import { useFormik } from "formik";
 import { loginSchema } from "../../lib/Validation"; // Yup schema
 import { useLogin } from "./useAuthMutations";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "./useAuth";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../Toast/Toast";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { token } = useAuth(); // useAuth يعطي token
+  const { token } = useAuth();
   const loginMutation = useLogin();
   const { showToast } = useToast();
 
+  
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -111,7 +111,9 @@ const Login = () => {
         {/* API Error */}
         {loginMutation.isError && (
           <p className="text-sm text-red-500 mt-2 text-center">
-            {loginMutation.error.response?.data?.message || "An error occurred"}
+            {loginMutation.error?.response?.data?.message ||
+              loginMutation.error?.message ||
+              "An error occurred"}
           </p>
         )}
       </form>

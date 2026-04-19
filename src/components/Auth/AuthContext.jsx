@@ -1,34 +1,48 @@
-import React from "react";
-import { createContext, useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { AuthContext } from "./auth.context";
 
-const AuthContext = createContext(null);
+function readStoredToken() {
+  return localStorage.getItem("userToken");
+}
+
+function readStoredUserInfo() {
+  const savedUserInfo = localStorage.getItem("userInfo");
+
+  if (!savedUserInfo) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(savedUserInfo);
+  } catch {
+    localStorage.removeItem("userInfo");
+    return null;
+  }
+}
 
 export function AuthContextProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem("userToken") || null);
-
-  const [userInfo, setUserInfo] = useState(() => {
-    const saved = localStorage.getItem("userInfo");
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [token, setToken] = useState(readStoredToken);
+  const [userInfo, setUserInfo] = useState(readStoredUserInfo);
 
   const isAuthenticated = !!token;
+  const user = isAuthenticated ? userInfo : null;
 
-  // Derive user object. If we have userInfo, use it.
-  const user =
-    isAuthenticated && userInfo
-      ? {
-          ...userInfo,
-          id: userInfo.email || userInfo._id, // Unified ID for storage keys
-          username: userInfo.name || userInfo.username || "User",
-        }
-      : null;
+  function saveUser(nextToken, userData) {
+    if (nextToken) {
+      localStorage.setItem("userToken", nextToken);
+      setToken(nextToken);
+    } else {
+      localStorage.removeItem("userToken");
+      setToken(null);
+    }
 
-  function saveUser(token, userData) {
-    localStorage.setItem("userToken", token);
-    localStorage.setItem("userInfo", JSON.stringify(userData));
-    setToken(token);
-    setUserInfo(userData);
+    if (userData) {
+      localStorage.setItem("userInfo", JSON.stringify(userData));
+      setUserInfo(userData);
+    } else {
+      localStorage.removeItem("userInfo");
+      setUserInfo(null);
+    }
   }
 
   function logout() {
@@ -45,8 +59,4 @@ export function AuthContextProvider({ children }) {
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  return useContext(AuthContext);
 }

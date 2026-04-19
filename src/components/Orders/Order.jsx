@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../Auth/AuthContext";
+import { useAuth } from "../Auth/useAuth";
 import { getOrders } from "../Checkout/checkoutAPi";
 import React from "react";
 

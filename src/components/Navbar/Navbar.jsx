@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useCart } from "../Cart/CartContext";
 import { useToast } from "../Toast/Toast";
-import { useAuth } from "../Auth/AuthContext";
+import { useAuth } from "../Auth/useAuth";
 const Navbar = () => {
   const { state } = useCart();
   const { isAuthenticated, logout, user } = useAuth();
@@ -23,6 +23,7 @@ const Navbar = () => {
   return (
     <nav className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white shadow-2xl sticky top-0 z-50 border-b-4 border-blue-500">
       <div className="container mx-auto px-4 py-4">
+
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link
@@ -61,6 +62,9 @@ const Navbar = () => {
               )}
             </svg>
           </button>
+
+      
+
 
           {/* Navigation Links - Desktop */}
           <div className="hidden md:flex items-center gap-8">

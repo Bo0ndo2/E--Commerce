@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { checkoutSchema } from "../../lib/Validation";
 import { useCart } from "../Cart/CartContext";
-import { useAuth } from "../Auth/AuthContext";
+import { useAuth } from "../Auth/useAuth";
 import { useToast } from "../Toast/Toast";
 import { createOrderApi } from "./checkoutAPi";
 import React from "react";

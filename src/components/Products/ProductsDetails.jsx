@@ -2,9 +2,8 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProduct } from '../../hooks/useProducts';
 import { useCart } from '../Cart/CartContext';
-import { useAuth } from '../Auth/AuthContext';
+import { useAuth } from '../Auth/useAuth';
 import { useToast } from '../Toast/Toast';
-import React from 'react'
 
 /**
  * ProductDetails Component

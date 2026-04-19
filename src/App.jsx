@@ -1,5 +1,4 @@
 import React from 'react'
-
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './App.css'
@@ -14,7 +13,6 @@ import CartContextProvider from './components/Cart/CartContext'
 import Checkout from './components/Checkout/Checkout'
 import Orders from './components/Orders/Order'
 import { ToastProvider } from './components/Toast/Toast'
-
 import Products from './components/Products/Products'
 import ProductDetails from './components/Products/ProductsDetails'
 const queryClient = new QueryClient()

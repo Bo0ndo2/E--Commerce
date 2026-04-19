@@ -1,13 +1,10 @@
-import React from 'react'
-
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+import { useAuth } from './useAuth';
 
 const ProtectedRoute = ({ children }) => {
   const { token } = useAuth();
   const location = useLocation();
 
-  // لو مش عامل login
   if (!token) {
     return (
       <Navigate
@@ -18,7 +15,6 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  // لو عامل login
   return children;
 };
 
