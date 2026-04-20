@@ -26,6 +26,15 @@ const buildCartPayload = (userId, productId, quantity) => ({
   products: [{ productId, quantity }],
 });
 
+const tryRemoteSync = async (syncFn) => {
+  try {
+    await syncFn();
+  } catch (error) {
+    // Keep cart UX working even if external API is unavailable.
+    console.warn("Cart remote sync failed, using local cart only.", error);
+  }
+};
+
 const saveCart = async (queryClient, userId, updater) => {
   const queryKey = getCartQueryKey(userId);
   const currentCart = queryClient.getQueryData(queryKey) || [];
@@ -68,7 +77,9 @@ export const useAddToCart = (userId) => {
         },
       );
 
-      await addToCartApi(buildCartPayload(userId, product.id, quantity));
+      await tryRemoteSync(() =>
+        addToCartApi(buildCartPayload(userId, product.id, quantity)),
+      );
 
       return nextCart;
     },
@@ -89,9 +100,11 @@ export const useUpdateCartItem = (userId) => {
           ),
       );
 
-      await updateCartApi(
-        FAKESTORE_CART_ID,
-        buildCartPayload(userId, id, newQuantity),
+      await tryRemoteSync(() =>
+        updateCartApi(
+          FAKESTORE_CART_ID,
+          buildCartPayload(userId, id, newQuantity),
+        ),
       );
 
       return nextCart;
@@ -108,7 +121,7 @@ export const useDeleteCartItem = (userId) => {
         current.filter((item) => item.id !== id),
       );
 
-      await deleteCartApi(FAKESTORE_CART_ID);
+      await tryRemoteSync(() => deleteCartApi(FAKESTORE_CART_ID));
 
       return nextCart;
     },
