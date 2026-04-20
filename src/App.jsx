@@ -75,15 +75,15 @@ function App() {
   ])
 
   return (
-    <AuthContextProvider>
-      <ToastProvider>
-        <CartContextProvider>
-          <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <AuthContextProvider>
+        <ToastProvider>
+          <CartContextProvider>
             <RouterProvider router={router} />
-          </QueryClientProvider>
-        </CartContextProvider>
-      </ToastProvider>
-    </AuthContextProvider>
+          </CartContextProvider>
+        </ToastProvider>
+      </AuthContextProvider>
+    </QueryClientProvider>
 
   )
 }

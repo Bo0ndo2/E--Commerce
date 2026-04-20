@@ -1,9 +1,11 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useCart } from "../Cart/CartContext";
-import { useToast } from "../Toast/Toast";
+import { useCart } from "../Cart/useCart";
+import { useToast } from "../Toast/useToast";
 import { useAuth } from "../Auth/useAuth";
+import Button from "../UI/Button";
+import Stack from "../UI/Stack";
 const Navbar = () => {
   const { state } = useCart();
   const { isAuthenticated, logout, user } = useAuth();
@@ -101,9 +103,9 @@ const Navbar = () => {
             {isAuthenticated ? (
               /* User Menu */
               <div className="relative z-50">
-                <button
+                <Button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full transition-all duration-300 font-semibold shadow-lg"
+                  className="rounded-full shadow-lg"
                 >
                   <span className="text-xl">👤</span>
                   <span>{user?.username}</span>
@@ -112,7 +114,7 @@ const Navbar = () => {
                   >
                     ▼
                   </span>
-                </button>
+                </Button>
 
                 {/* Dropdown Menu */}
                 {showUserMenu && (
@@ -136,12 +138,13 @@ const Navbar = () => {
               </div>
             ) : (
               /* Login Button */
-              <Link
+              <Button
+                as={Link}
                 to="/login"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="rounded-full shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 Login
-              </Link>
+              </Button>
             )}
           </div>
         </div>
@@ -149,7 +152,7 @@ const Navbar = () => {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 bg-gray-800 rounded-lg p-4 shadow-xl border border-gray-700">
-            <div className="flex flex-col space-y-4">
+            <Stack gap={4}>
               <Link
                 to="/"
                 className="text-gray-100 hover:text-blue-400 font-semibold text-lg"
@@ -189,15 +192,17 @@ const Navbar = () => {
                   </button>
                 </>
               ) : (
-                <Link
+                <Button
+                  as={Link}
                   to="/login"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-center font-semibold"
+                  fullWidth
+                  className="text-center"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Login
-                </Link>
+                </Button>
               )}
-            </div>
+            </Stack>
           </div>
         )}
       </div>

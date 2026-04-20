@@ -1,10 +1,14 @@
+import React from 'react';
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { registerSchema } from "../../lib/Validation";
 import { useAuth } from "./useAuth";
 import { useRegister } from "./useAuthMutations";
-import { useToast } from "../Toast/Toast";
+import { useToast } from "../Toast/useToast";
+import Button from "../UI/Button";
+import Card from "../UI/Card";
+import Stack from "../UI/Stack";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -49,7 +53,7 @@ const Register = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center py-12 px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8">
+      <Card className="max-w-md w-full rounded-2xl border-gray-100" shadow="xl" padding="lg">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="text-5xl mb-4">✨</div>
@@ -58,7 +62,7 @@ const Register = () => {
         </div>
 
         {/* Register Form */}
-        <form onSubmit={formik.handleSubmit} className="space-y-5">
+        <Stack as="form" onSubmit={formik.handleSubmit} gap={5}>
           {/* Username */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -154,14 +158,15 @@ const Register = () => {
               )}
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={registerMutation.isPending}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold"
+            fullWidth
+            size="lg"
           >
             {registerMutation.isPending ? "Creating Account..." : "Sign Up"}
-          </button>
-        </form>
+          </Button>
+        </Stack>
 
         <div className="mt-6 text-center">
           <p className="text-gray-600">
@@ -171,7 +176,7 @@ const Register = () => {
             </Link>
           </p>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

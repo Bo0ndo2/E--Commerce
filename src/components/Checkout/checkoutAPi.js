@@ -1,18 +1,36 @@
-const ORDERS_KEY = "bondok_shop_orders";
+const ORDERS_KEY_PREFIX = "bondok_shop_orders";
+const LEGACY_ORDERS_KEY = "bondok_shop_orders";
 
-export function getOrders() {
-  console.log("Fetching all orders...");
-  const data = localStorage.getItem(ORDERS_KEY);
-  const parsed = data ? JSON.parse(data) : [];
-  console.log("Found orders:", parsed);
-  return parsed;
+const getOrdersStorageKey = (userId) =>
+  `${ORDERS_KEY_PREFIX}_${userId || "guest"}`;
+
+export async function getOrdersApi(userId) {
+  const scopedKey = getOrdersStorageKey(userId);
+  const scopedOrders = localStorage.getItem(scopedKey);
+
+  if (scopedOrders) {
+    return JSON.parse(scopedOrders);
+  }
+
+  const legacyOrders = localStorage.getItem(LEGACY_ORDERS_KEY);
+  if (!legacyOrders) {
+    return [];
+  }
+
+  const parsedLegacyOrders = JSON.parse(legacyOrders);
+  localStorage.setItem(scopedKey, JSON.stringify(parsedLegacyOrders));
+
+  return parsedLegacyOrders;
 }
 
-export function createOrderApi(order) {
-  console.log("Creating order:", order);
-  const orders = getOrders();
-  orders.unshift(order);
-  localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
-  console.log("Order saved to global localStorage");
+export async function createOrderApi(order, userId) {
+  const currentOrders = await getOrdersApi(userId);
+  const updatedOrders = [order, ...currentOrders];
+
+  localStorage.setItem(
+    getOrdersStorageKey(userId),
+    JSON.stringify(updatedOrders),
+  );
+
   return order;
 }

@@ -1,16 +1,14 @@
+import React from 'react';
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProduct } from '../../hooks/useProducts';
-import { useCart } from '../Cart/CartContext';
+import { useCart } from '../Cart/useCart';
 import { useAuth } from '../Auth/useAuth';
-import { useToast } from '../Toast/Toast';
+import { useToast } from '../Toast/useToast';
+import Button from '../UI/Button';
+import Card from '../UI/Card';
 
-/**
- * ProductDetails Component
- * - عرض تفاصيل المنتج كاملة
- * - إضافة المنتج للـ Cart (مع التحقق من Login)
- * - Quantity Selection
- */
+
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -26,7 +24,6 @@ const ProductDetails = () => {
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
-      // تحويل للـ Login إذا مش مسجل دخول
       showToast('Please login to add items to cart', 'warning');
       navigate('/login', { state: { from: `/products/${id}` } });
       return;
@@ -56,12 +53,12 @@ const ProductDetails = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl text-red-500 mb-4">❌ {error || 'Product not found'}</p>
-          <button
+          <Button
             onClick={() => navigate('/products')}
-            className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
+            className="bg-primary hover:bg-blue-600"
           >
             Back to Products
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -73,12 +70,12 @@ const ProductDetails = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl text-red-500 mb-4">❌ Product not found</p>
-          <button
+          <Button
             onClick={() => navigate('/products')}
-            className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
+            className="bg-primary hover:bg-blue-600"
           >
             Back to Products
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -88,15 +85,16 @@ const ProductDetails = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
         {/* Back Button */}
-        <button
+        <Button
           onClick={() => navigate('/products')}
-          className="mb-6 text-primary hover:text-blue-600 font-medium flex items-center gap-2"
+          variant="ghost"
+          className="mb-6 px-0 hover:bg-transparent"
         >
           ← Back to Products
-        </button>
+        </Button>
 
         {/* Product Details */}
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <Card padding="none" shadow="lg" overflowHidden>
           <div className="grid md:grid-cols-2 gap-8 p-8">
             {/* Product Image */}
             <div className="flex items-center justify-center bg-gray-50 p-8 rounded-lg">
@@ -149,34 +147,39 @@ const ProductDetails = () => {
                   Quantity
                 </label>
                 <div className="flex items-center gap-3">
-                  <button
+                  <Button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="bg-gray-200 hover:bg-gray-300 w-10 h-10 rounded-lg font-bold"
+                    variant="secondary"
+                    size="icon"
+                    className="w-10 h-10 font-bold"
                   >
                     -
-                  </button>
+                  </Button>
                   <span className="text-xl font-semibold w-12 text-center">
                     {quantity}
                   </span>
-                  <button
+                  <Button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="bg-gray-200 hover:bg-gray-300 w-10 h-10 rounded-lg font-bold"
+                    variant="secondary"
+                    size="icon"
+                    className="w-10 h-10 font-bold"
                   >
                     +
-                  </button>
+                  </Button>
                 </div>
               </div>
 
               {/* Add to Cart Button */}
-              <button
+              <Button
                 onClick={handleAddToCart}
-                className="bg-primary text-white py-3 px-8 rounded-lg font-semibold hover:bg-blue-600 transition text-lg"
+                size="xl"
+                className="bg-primary hover:bg-blue-600"
               >
                 Add to Cart
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

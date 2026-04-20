@@ -1,29 +1,15 @@
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import Button from '../UI/Button';
+import Card from '../UI/Card';
 
 // Error Fallback Component
 export function RouterErrorFallback({ error, resetErrorBoundary }) {
-  // We try to use navigate, but if we are outside the Router provider (like in the top-level ErrorBoundary),
-  // this hook might throw or return undefined depending on version.
-
-  // Let's make this component robust:
-  const isInsideRouter = tryUseNavigate();
-
-  function tryUseNavigate() {
-    try {
-      return useNavigate();
-    } catch {
-      return null;
-    }
-  }
-
-  const navigate = isInsideRouter;
-
   // Safe error message extraction
   const errorMessage = error instanceof Error ? error.message : String(error || 'Unknown error');
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
+      <Card className="max-w-md w-full text-center" shadow="lg" padding="lg">
         <div className="text-6xl mb-4">⚠️</div>
         <h2 className="text-2xl font-bold text-gray-800 mb-4">
           Something went wrong
@@ -42,28 +28,22 @@ export function RouterErrorFallback({ error, resetErrorBoundary }) {
           </pre>
         </details>
         <div className="flex gap-3 justify-center">
-          <button
+          <Button
             onClick={resetErrorBoundary}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
           >
             Try Again
-          </button>
+          </Button>
 
-          {/* Only show Go Home if we can navigate, or use window.location */}
-          <button
+          <Button
             onClick={() => {
-              if (navigate) {
-                navigate('/');
-              } else {
-                window.location.href = '/';
-              }
+              window.location.href = '/';
             }}
-            className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-300 transition"
+            variant="secondary"
           >
             Go Home
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

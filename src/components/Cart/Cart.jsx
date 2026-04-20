@@ -1,13 +1,14 @@
 import React from 'react'
-import { useContext } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { CartContext } from "./CartContext";
+import { useCart } from "./useCart";
 import CartItem from "./CartItem";
+import Button from "../UI/Button";
+import Card from "../UI/Card";
+import Stack from "../UI/Stack";
 
 import { useNavigate } from "react-router-dom";
 
 export default function Cart() {
-  const { cartItems, totalCartPrice } = useContext(CartContext);
+  const { cartItems, totalCartPrice } = useCart();
   const navigate = useNavigate();
 
   if (!cartItems || cartItems.length === 0) {
@@ -23,24 +24,26 @@ export default function Cart() {
     <div className="container mx-auto mt-10 px-4">
       <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
 
-      <div className="space-y-4">
+      <Stack gap={4}>
         {cartItems.map((item) => (
           <CartItem key={item.id} item={item} />
         ))}
-      </div>
+      </Stack>
 
-      <div className="mt-8 bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
+      <Card className="mt-8 bg-gray-50 border-gray-200" shadow="sm">
         <h3 className="text-xl font-bold flex justify-between items-center text-gray-800">
           <span>Total Price:</span>
           <span className="text-primary text-2xl">${totalCartPrice}</span>
         </h3>
-        <button
+        <Button
           onClick={() => navigate('/checkout')}
-          className="w-full mt-4 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
+          fullWidth
+          size="lg"
+          className="mt-4"
         >
           Checkout
-        </button>
-      </div>
+        </Button>
+      </Card>
     </div>
   );
 }

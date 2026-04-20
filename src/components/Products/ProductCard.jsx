@@ -1,8 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useCart } from "../Cart/CartContext";
+import { useCart } from "../Cart/useCart";
 import { useAuth } from "../Auth/useAuth";
-import { useToast } from "../Toast/Toast";
+import { useToast } from "../Toast/useToast";
 import React from "react";
+import Card from "../UI/Card";
+import Button from "../UI/Button";
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
@@ -21,7 +23,12 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col min-h-[420px] transition-shadow duration-300">
+    <Card
+      padding="none"
+      shadow="xl"
+      overflowHidden
+      className="flex flex-col min-h-[420px] transition-shadow duration-300"
+    >
       {/* Product Image */}
       <Link to={`/products/${product.id}`}>
         <div className="h-64 bg-gray-100 flex items-center justify-center p-4">
@@ -61,25 +68,15 @@ const ProductCard = ({ product }) => {
             ${product.price}
           </span>
 
-          <button
+          <Button
             onClick={handleAddToCart}
-            className="
-              bg-blue-600
-              text-white
-              px-4 py-2
-              rounded-lg
-              font-medium
-              cursor-pointer
-              shadow-md
-              active:translate-y-0.5
-              transition
-            "
+            className="cursor-pointer shadow-md active:translate-y-0.5"
           >
             Add to Cart
-          </button>
+          </Button>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 

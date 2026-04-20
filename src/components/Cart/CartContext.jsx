@@ -1,66 +1,40 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { addToCartApi, updateCartApi, deleteCartApi } from "./cartApi";
+import React, { useMemo } from "react";
 import { useAuth } from "../Auth/useAuth";
-import { useToast } from "../Toast/Toast";
+import { useToast } from "../Toast/useToast";
+import { CartContext } from "./cart.context";
+import {
+  useAddToCart,
+  useCartItems,
+  useClearCart,
+  useDeleteCartItem,
+  useUpdateCartItem,
+} from "../../hooks/useCart";
 
-export const CartContext = createContext();
 
 export default function CartContextProvider({ children }) {
   const { showToast } = useToast();
   const { user } = useAuth();
+  const userId = user?.id || "guest";
 
-  const [cartItems, setCartItems] = useState(() => {
-    const userId = user?.id || "guest";
-    const savedCart = localStorage.getItem(`cart_${userId}`);
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+  const { data: cartItems = [] } = useCartItems(userId);
+  const addToCartMutation = useAddToCart(userId);
+  const updateProductMutation = useUpdateCartItem(userId);
+  const deleteProductMutation = useDeleteCartItem(userId);
+  const clearCartMutation = useClearCart(userId);
 
-  // Sync cart with User ID changes (Login/Logout)
-  useEffect(() => {
-    const userId = user?.id || "guest";
-    const savedCart = localStorage.getItem(`cart_${userId}`);
-    if (savedCart) {
-      setCartItems(JSON.parse(savedCart));
-    } else {
-      setCartItems([]);
-    }
-  }, [user]);
-
-  // Persist cart to localStorage whenever it changes
-  useEffect(() => {
-    const userId = user?.id || "guest";
-    localStorage.setItem(`cart_${userId}`, JSON.stringify(cartItems));
-  }, [cartItems, user]);
-
-  // Calculate total price
-  const totalCartPrice = cartItems
-    .reduce((total, item) => {
-      return total + item.price * item.quantity;
-    }, 0)
-    .toFixed(2);
+  const totalCartPrice = useMemo(
+    () =>
+      cartItems
+        .reduce((total, item) => {
+          return total + item.price * item.quantity;
+        }, 0)
+        .toFixed(2),
+    [cartItems],
+  );
 
   const addToCart = async (product, quantity = 1) => {
     try {
-      // Update local state
-      setCartItems((prev) => {
-        const existingItem = prev.find((item) => item.id === product.id);
-        if (existingItem) {
-          return prev.map((item) =>
-            item.id === product.id
-              ? { ...item, quantity: item.quantity + quantity }
-              : item,
-          );
-        }
-        return [...prev, { ...product, quantity }];
-      });
-
-      // API Call (Mock)
-      const payload = {
-        userId: 2,
-        date: new Date().toISOString().split("T")[0],
-        products: [{ productId: product.id, quantity }],
-      };
-      await addToCartApi(payload);
+      await addToCartMutation.mutateAsync({ product, quantity });
 
       showToast(
         `Added ${quantity} ${product.title.substring(0, 20)}... to cart`,
@@ -75,40 +49,33 @@ export default function CartContextProvider({ children }) {
   const updateProduct = async (id, newQuantity) => {
     if (newQuantity < 1) return;
 
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item,
-      ),
-    );
-
-    // Mock API call
     try {
-      await updateCartApi(1, {
-        products: [{ productId: id, quantity: newQuantity }],
-      });
+      await updateProductMutation.mutateAsync({ id, newQuantity });
     } catch (e) {
       console.error(e);
     }
   };
 
   const deleteProduct = async (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-    showToast("Item removed from cart", "info");
-
-    // Mock API call
     try {
-      await deleteCartApi(1);
+      await deleteProductMutation.mutateAsync(id);
+      showToast("Item removed from cart", "info");
     } catch (e) {
       console.error(e);
     }
   };
 
-  const clearCart = () => setCartItems([]);
+  const clearCart = async () => {
+    await clearCartMutation.mutateAsync();
+  };
 
-  // Calculate total items in cart
-  const totalItems = cartItems.reduce(
-    (total, item) => total + item.quantity,
-    0,
+  const totalItems = useMemo(
+    () =>
+      cartItems.reduce(
+        (total, item) => total + item.quantity,
+        0,
+      ),
+    [cartItems],
   );
 
   return (
@@ -130,7 +97,3 @@ export default function CartContextProvider({ children }) {
     </CartContext.Provider>
   );
 }
-
-export const useCart = () => {
-  return useContext(CartContext);
-};

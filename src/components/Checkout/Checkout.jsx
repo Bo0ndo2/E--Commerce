@@ -1,19 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { checkoutSchema } from "../../lib/Validation";
-import { useCart } from "../Cart/CartContext";
+import { useCart } from "../Cart/useCart";
 import { useAuth } from "../Auth/useAuth";
-import { useToast } from "../Toast/Toast";
-import { createOrderApi } from "./checkoutAPi";
+import { useToast } from "../Toast/useToast";
+import { useCreateOrder } from "../../hooks/useOrders";
 import React from "react";
+import Button from "../UI/Button";
+import Card from "../UI/Card";
+import Stack from "../UI/Stack";
 const Checkout = () => {
   const { cartItems, totalCartPrice, clearCart } = useCart();
   const { user } = useAuth();
-  console.log("Checkout.jsx: current user object:", user);
   const { showToast } = useToast();
   const navigate = useNavigate();
-  const [isPending, setIsPending] = useState(false);
+  const createOrderMutation = useCreateOrder(user?.id);
+  const isPending = createOrderMutation.isPending;
 
   useEffect(() => {
     if (!cartItems || cartItems.length === 0) {
@@ -34,35 +37,30 @@ const Checkout = () => {
     },
     validationSchema: checkoutSchema,
     onSubmit: async (values) => {
-      console.log("Submitting order...", values);
-      setIsPending(true);
+      const newOrder = {
+        id: Date.now().toString(),
+        date: new Date().toISOString(),
+        total: Number(totalCartPrice),
+        status: "pending",
+        userId: user?.id || "guest",
+        items: cartItems,
+        shippingDetails: {
+          fullName: values.fullName,
+          address: values.address,
+          city: values.city,
+          postalCode: values.postalCode,
+        },
+      };
 
-      // Simulate API call
-      setTimeout(() => {
-        setIsPending(false);
-
-        // Save Order to LocalStorage (Mock Backend)
-        const newOrder = {
-          id: Date.now().toString(),
-          date: new Date().toISOString(),
-          total: totalCartPrice,
-          status: "pending",
-          items: cartItems,
-          shippingDetails: {
-            fullName: values.fullName,
-            address: values.address,
-            city: values.city,
-            postalCode: values.postalCode,
-          },
-        };
-
-        console.log("Checkout.jsx: saving order...");
-        createOrderApi(newOrder);
-
+      try {
+        await createOrderMutation.mutateAsync(newOrder);
         showToast("Order placed successfully! 🎉", "success");
-        clearCart();
+        await clearCart();
         navigate("/orders");
-      }, 2000);
+      } catch (error) {
+        console.error("Failed to place order", error);
+        showToast("Failed to place order. Please try again.", "error");
+      }
     },
   });
 
@@ -76,9 +74,9 @@ const Checkout = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* ===== LEFT: FORM ===== */}
           <div className="lg:col-span-2">
-            <form onSubmit={formik.handleSubmit} className="space-y-6">
+            <Stack as="form" onSubmit={formik.handleSubmit} gap={6}>
               {/* ===== Shipping Information ===== */}
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <Card shadow="md">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">
                   Shipping Information
                 </h2>
@@ -192,15 +190,15 @@ const Checkout = () => {
                     )}
                   </div>
                 </div>
-              </div>
+              </Card>
 
               {/* ===== Payment Information ===== */}
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <Card shadow="md">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">
                   Payment Information
                 </h2>
 
-                <div className="space-y-4">
+                <Stack gap={4}>
                   <div>
                     <label className="block text-sm font-medium mb-2">
                       Card Number *
@@ -266,26 +264,28 @@ const Checkout = () => {
                       )}
                     </div>
                   </div>
-                </div>
-              </div>
+                </Stack>
+              </Card>
 
               {/* ===== Button ===== */}
-              <button
+              <Button
                 type="submit"
                 disabled={isPending}
-                className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-gray-400"
+                fullWidth
+                size="lg"
+                className="py-4 disabled:bg-gray-400"
               >
                 {isPending ? "Processing..." : "Place Order"}
-              </button>
-            </form>
+              </Button>
+            </Stack>
           </div>
 
           {/* ===== RIGHT: ORDER SUMMARY ===== */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
+            <Card shadow="md" className="sticky top-24">
               <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
 
-              <div className="space-y-3 mb-6 max-h-64 overflow-y-auto">
+              <Stack gap={3} className="mb-6 max-h-64 overflow-y-auto">
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex gap-3">
                     <img
@@ -303,9 +303,9 @@ const Checkout = () => {
                     </div>
                   </div>
                 ))}
-              </div>
+              </Stack>
 
-              <div className="border-t pt-4 space-y-3">
+              <Stack gap={3} className="border-t pt-4">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
                   <span className="font-semibold">${totalCartPrice}</span>
@@ -317,8 +317,8 @@ const Checkout = () => {
                     ${totalCartPrice}
                   </span>
                 </div>
-              </div>
-            </div>
+              </Stack>
+            </Card>
           </div>
         </div>
       </div>

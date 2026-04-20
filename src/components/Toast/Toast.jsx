@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useCallback } from 'react';
 import React from 'react';
-
-const ToastContext = createContext(undefined);
+import { useState, useCallback } from 'react';
+import { ToastContext } from './toast.context';
+import Stack from '../UI/Stack';
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
@@ -51,7 +51,7 @@ export const ToastProvider = ({ children }) => {
       {children}
 
       {/* Toast Container */}
-      <div className="fixed top-20 right-4 z-[100] space-y-3">
+      <Stack gap={3} className="fixed top-20 right-4 z-[100]">
         {toasts.map(toast => (
           <div
             key={toast.id}
@@ -69,7 +69,7 @@ export const ToastProvider = ({ children }) => {
             </button>
           </div>
         ))}
-      </div>
+      </Stack>
 
       {/* Animation Styles */}
       <style>{`
@@ -89,12 +89,4 @@ export const ToastProvider = ({ children }) => {
       `}</style>
     </ToastContext.Provider>
   );
-};
-
-export const useToast = () => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToast must be used within ToastProvider');
-  }
-  return context;
 };

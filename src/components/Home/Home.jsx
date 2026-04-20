@@ -1,5 +1,25 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Button from '../UI/Button';
+import Card from '../UI/Card';
+
+const features = [
+  {
+    icon: '🚚',
+    title: 'Fast Delivery',
+    description: 'Get your orders delivered quickly',
+  },
+  {
+    icon: '💳',
+    title: 'Secure Payment',
+    description: 'Shop with confidence and security',
+  },
+  {
+    icon: '🎁',
+    title: 'Best Prices',
+    description: 'Amazing deals and discounts',
+  },
+];
 
 
 const Home = () => {
@@ -19,12 +39,14 @@ const Home = () => {
           
           {/* CTA Buttons */}
           <div className="flex gap-4 justify-center">
-            <Link
+            <Button
+              as={Link}
               to="/products"
-              className="bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-800 transition shadow-lg"
+              size="xl"
+              className="bg-blue-700 hover:bg-blue-800 shadow-lg"
             >
               Shop Now
-            </Link>
+            </Button>
            
            
           </div>
@@ -32,23 +54,13 @@ const Home = () => {
 
         {/* Features Section */}
         <div className="grid md:grid-cols-3 gap-8 mt-20">
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <div className="text-4xl mb-4">🚚</div>
-            <h3 className="text-xl font-semibold mb-2">Fast Delivery</h3>
-            <p className="text-gray-600">Get your orders delivered quickly</p>
-          </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <div className="text-4xl mb-4">💳</div>
-            <h3 className="text-xl font-semibold mb-2">Secure Payment</h3>
-            <p className="text-gray-600">Shop with confidence and security</p>
-          </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <div className="text-4xl mb-4">🎁</div>
-            <h3 className="text-xl font-semibold mb-2">Best Prices</h3>
-            <p className="text-gray-600">Amazing deals and discounts</p>
-          </div>
+          {features.map((feature) => (
+            <Card key={feature.title} className="text-center border-0" shadow="md">
+              <div className="text-4xl mb-4">{feature.icon}</div>
+              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+              <p className="text-gray-600">{feature.description}</p>
+            </Card>
+          ))}
         </div>
       </div>
     </div>

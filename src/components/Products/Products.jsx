@@ -3,9 +3,9 @@ import { useState, useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
 import { useProducts, useCategories } from '../../hooks/useProducts';
 import ProductCard from './ProductCard';
+import Card from '../UI/Card';
 
 const Products = () => {
-  // React Query hooks
   const { data: products = [], isLoading: loading, error: queryError } = useProducts();
   const { data: categoriesData = [] } = useCategories();
 
@@ -15,6 +15,7 @@ const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('default');
 
+  
   // Extract categories from products if categories API fails
   const categories = useMemo(() => {
     if (categoriesData.length > 0) return categoriesData;
@@ -26,9 +27,9 @@ const Products = () => {
     let result = [...products];
 
     // Search Filter
-    if (searchTerm) {
+    if (debouncedSearchTerm) {
       result = result.filter(product =>
-        product.title.toLowerCase().includes(searchTerm.toLowerCase())
+        product.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
       );
     }
 
@@ -82,7 +83,7 @@ const Products = () => {
         <h1 className="text-4xl font-bold text-gray-800 mb-8">Our Products</h1>
 
         {/* Filters Section */}
-        <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+        <Card className="mb-8" shadow="md">
           <div className="grid md:grid-cols-3 gap-4">
             {/* Search */}
             <input
@@ -120,7 +121,7 @@ const Products = () => {
               <option value="rating">Highest Rated</option>
             </select>
           </div>
-        </div>
+        </Card>
 
         {/* Results Count */}
         <p className="text-gray-600 mb-4">
