@@ -1,53 +1,21 @@
 import React from 'react';
-import { useState, useMemo } from 'react';
-import { useDebounce } from 'use-debounce';
-import { useProducts, useCategories } from '../../hooks/useProducts';
+import { useProducts, useCategories, useProductFilters } from '../../hooks';
 import ProductCard from './ProductCard';
 
 const Products = () => {
   // React Query hooks
   const { data: products = [], isLoading: loading, error: queryError } = useProducts();
-  const { data: categoriesData = [] } = useCategories();
+  const { data: categories = [] } = useCategories();
 
-  // Filters
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm] = useDebounce(searchTerm, 400);
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [sortBy, setSortBy] = useState('default');
-
-  // Extract categories from products if categories API fails
-  const categories = useMemo(() => {
-    if (categoriesData.length > 0) return categoriesData;
-    return Array.from(new Set(products.map((p) => p.category)));
-  }, [categoriesData, products]);
-
-  // Apply Filters with useMemo for performance
-  const filteredProducts = useMemo(() => {
-    let result = [...products];
-
-    // Search Filter
-    if (searchTerm) {
-      result = result.filter(product =>
-        product.title.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Category Filter
-    if (selectedCategory !== 'all') {
-      result = result.filter(product => product.category === selectedCategory);
-    }
-
-    // Sorting
-    if (sortBy === 'price-low') {
-      result.sort((a, b) => a.price - b.price);
-    } else if (sortBy === 'price-high') {
-      result.sort((a, b) => b.price - a.price);
-    } else if (sortBy === 'rating') {
-      result.sort((a, b) => b.rating.rate - a.rating.rate);
-    }
-
-    return result;
-  }, [debouncedSearchTerm, selectedCategory, sortBy, products]);
+  const {
+    searchTerm,
+    setSearchTerm,
+    selectedCategory,
+    setSelectedCategory,
+    sortBy,
+    setSortBy,
+    filteredProducts,
+  } = useProductFilters(products);
 
   const error = queryError instanceof Error ? queryError.message : '';
 
