@@ -1,14 +1,12 @@
-import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-
-const BASE_URL = 'https://fakestoreapi.com';
+import { fakeStoreApi } from '../lib/fakeStoreApi';
 
 // Fetch all products
 export const useProducts = () => {
   return useQuery({
     queryKey: ['products'],
     queryFn: async () => {
-      const response = await axios.get(`${BASE_URL}/products`);
+      const response = await fakeStoreApi.get('/products');
       return response.data;
     },
   });
@@ -20,7 +18,7 @@ export const useProduct = (id) => {
     queryKey: ['product', id],
     queryFn: async () => {
       if (!id) throw new Error('Product ID is required');
-      const response = await axios.get(`${BASE_URL}/products/${id}`);
+      const response = await fakeStoreApi.get(`/products/${id}`);
       return response.data;
     },
     enabled: !!id,
@@ -32,7 +30,7 @@ export const useCategories = () => {
   return useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
-      const response = await axios.get(`${BASE_URL}/products/categories`);
+      const response = await fakeStoreApi.get('/products/categories');
       return response.data;
     },
   });

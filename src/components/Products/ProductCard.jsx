@@ -1,7 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useCart } from "../Cart/CartContext";
-import { useAuth } from "../Auth/useAuth";
-import { useToast } from "../Toast/Toast";
+import { useAuth, useCart, useToast } from "../../hooks";
 import React from "react";
 
 const ProductCard = ({ product }) => {
@@ -23,15 +21,15 @@ const ProductCard = ({ product }) => {
   return (
     <div className="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col min-h-[420px] transition-shadow duration-300">
       {/* Product Image */}
-      <Link to={`/products/${product.id}`}>
-        <div className="h-64 bg-gray-100 flex items-center justify-center p-4">
-          <img
-            src={product.image}
-            alt={product.title}
-            className="max-h-full max-w-full object-contain hover:scale-105 transition-transform duration-300"
-          />
-        </div>
-      </Link>
+        <Link to={`/products/${product.id}`}>
+          <div className="h-64 bg-gray-100 flex items-center justify-center p-4">
+            <img
+              src={product.image}
+              alt={product.title}
+              className="max-h-full max-w-full object-contain hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        </Link>
 
       {/* Product Info */}
       <div className="p-4 flex flex-col flex-1">

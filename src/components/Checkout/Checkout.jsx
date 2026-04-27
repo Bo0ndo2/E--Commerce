@@ -2,15 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { checkoutSchema } from "../../lib/Validation";
-import { useCart } from "../Cart/CartContext";
-import { useAuth } from "../Auth/useAuth";
-import { useToast } from "../Toast/Toast";
+import { useAuth, useCart, useToast } from "../../hooks";
 import { createOrderApi } from "./checkoutAPi";
 import React from "react";
 const Checkout = () => {
   const { cartItems, totalCartPrice, clearCart } = useCart();
   const { user } = useAuth();
-  console.log("Checkout.jsx: current user object:", user);
   const { showToast } = useToast();
   const navigate = useNavigate();
   const [isPending, setIsPending] = useState(false);
@@ -34,19 +31,15 @@ const Checkout = () => {
     },
     validationSchema: checkoutSchema,
     onSubmit: async (values) => {
-      console.log("Submitting order...", values);
       setIsPending(true);
 
-      // Simulate API call
-      setTimeout(() => {
-        setIsPending(false);
-
-        // Save Order to LocalStorage (Mock Backend)
+      try {
         const newOrder = {
           id: Date.now().toString(),
           date: new Date().toISOString(),
           total: totalCartPrice,
           status: "pending",
+          customerEmail: values.email,
           items: cartItems,
           shippingDetails: {
             fullName: values.fullName,
@@ -56,13 +49,16 @@ const Checkout = () => {
           },
         };
 
-        console.log("Checkout.jsx: saving order...");
-        createOrderApi(newOrder);
+        await createOrderApi(newOrder, user?.id);
 
         showToast("Order placed successfully! 🎉", "success");
         clearCart();
         navigate("/orders");
-      }, 2000);
+      } catch {
+        showToast("Could not place order. Please try again.", "error");
+      } finally {
+        setIsPending(false);
+      }
     },
   });
 

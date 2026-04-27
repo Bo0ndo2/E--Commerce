@@ -1,13 +1,11 @@
 import React from 'react'
-import { useContext } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { CartContext } from "./CartContext";
+import { useCart } from "../../hooks";
 import CartItem from "./CartItem";
 
 import { useNavigate } from "react-router-dom";
 
 export default function Cart() {
-  const { cartItems, totalCartPrice } = useContext(CartContext);
+  const { cartItems, totalCartPrice } = useCart();
   const navigate = useNavigate();
 
   if (!cartItems || cartItems.length === 0) {

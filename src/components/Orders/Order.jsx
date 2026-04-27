@@ -1,27 +1,16 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../Auth/useAuth";
-import { getOrders } from "../Checkout/checkoutAPi";
+import { useAuth, useOrders } from "../../hooks";
 import React from "react";
 
 const Orders = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadOrders = () => {
-      console.log("Order.jsx: loading all orders...");
-      setLoading(true);
-      const parsedOrders = getOrders();
-      console.log("Order.jsx: loaded orders:", parsedOrders);
-      setOrders(parsedOrders);
-      setLoading(false);
-    };
-
-    loadOrders();
-  }, []);
+  const {
+    data: orders = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useOrders(user?.id);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -53,12 +42,56 @@ const Orders = () => {
     }
   };
 
-  if (loading) {
+  const formatOrderDate = (value) => {
+    if (!value) return "N/A";
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return "N/A";
+    }
+
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const formatMoney = (value) => {
+    const amount = Number(value);
+    return Number.isFinite(amount) ? amount.toFixed(2) : "0.00";
+  };
+
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center py-20">
             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center max-w-md mx-auto">
+            <div className="text-6xl mb-4">⚠️</div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-3">
+              Couldn&apos;t Load Orders
+            </h2>
+            <p className="text-gray-600 mb-8">
+              There was a problem fetching your order history.
+            </p>
+            <button
+              onClick={() => refetch()}
+              className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            >
+              Retry
+            </button>
           </div>
         </div>
       </div>
@@ -115,29 +148,20 @@ const Orders = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Date</p>
-                    <p className="font-semibold text-gray-800">
-                      {new Date(order.date).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
+                    <p className="font-semibold text-gray-800">{formatOrderDate(order?.date)}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Total</p>
                     <p className="font-bold text-blue-600 text-xl">
-                      $
-                      {typeof order.total === "number"
-                        ? order.total.toFixed(2)
-                        : order.total}
+                      ${formatMoney(order?.total)}
                     </p>
                   </div>
                   <div>
                     <span
-                      className={`${getStatusColor(order.status)} px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2`}
+                      className={`${getStatusColor(order?.status)} px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2`}
                     >
-                      <span>{getStatusIcon(order.status)}</span>
-                      <span className="capitalize">{order.status}</span>
+                      <span>{getStatusIcon(order?.status)}</span>
+                      <span className="capitalize">{order?.status || "unknown"}</span>
                     </span>
                   </div>
                 </div>
@@ -148,6 +172,7 @@ const Orders = () => {
                 <h3 className="font-semibold text-gray-800 mb-4">
                   Items ({order.items.length})
                 </h3>
+
                 <div className="space-y-4">
                   {order.items.map((item) => (
                     <div
@@ -164,25 +189,32 @@ const Orders = () => {
                           {item.title}
                         </p>
                         <p className="text-sm text-gray-600">
-                          Qty: {item.quantity} × ${item.price}
+                          Qty: {item.quantity} × ${formatMoney(item.price)}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-gray-800">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          ${formatMoney(item.price * item.quantity)}
                         </p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-
               {/* Order Actions */}
               <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex gap-3">
-                <button className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-medium transition">
+                <button
+                  disabled
+                  title="Tracking will be available when backend integration is ready"
+                  className="flex-1 bg-blue-400 text-white py-2 px-4 rounded-lg font-medium cursor-not-allowed opacity-70"
+                >
                   Track Order
                 </button>
-                <button className="flex-1 border-2 border-gray-300 hover:border-gray-400 text-gray-700 py-2 px-4 rounded-lg font-medium transition">
+                <button
+                  disabled
+                  title="Order details page will be available when backend integration is ready"
+                  className="flex-1 border-2 border-gray-300 text-gray-500 py-2 px-4 rounded-lg font-medium cursor-not-allowed"
+                >
                   View Details
                 </button>
               </div>

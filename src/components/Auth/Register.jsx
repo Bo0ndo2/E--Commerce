@@ -2,9 +2,8 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { registerSchema } from "../../lib/Validation";
-import { useAuth } from "./useAuth";
+import { useAuth, useToast } from "../../hooks";
 import { useRegister } from "./useAuthMutations";
-import { useToast } from "../Toast/Toast";
 
 const Register = () => {
   const navigate = useNavigate();

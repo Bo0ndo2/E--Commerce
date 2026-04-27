@@ -2,9 +2,8 @@ import { useEffect } from "react";
 import { useFormik } from "formik";
 import { loginSchema } from "../../lib/Validation"; // Yup schema
 import { useLogin } from "./useAuthMutations";
-import { useAuth } from "./useAuth";
+import { useAuth, useToast } from "../../hooks";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../Toast/Toast";
 
 const Login = () => {
   const navigate = useNavigate();

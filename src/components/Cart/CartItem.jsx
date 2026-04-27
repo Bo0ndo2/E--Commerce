@@ -1,11 +1,9 @@
 import React from 'react'
 
-import { useContext } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CartContext } from "./CartContext";
+import { useCart } from "../../hooks";
 
 export default function CartItem({ item }) {
-  const { updateProduct, deleteProduct } = useContext(CartContext);
+  const { updateProduct, deleteProduct } = useCart();
 
   function increase() {
     updateProduct(item.id, item.quantity + 1);

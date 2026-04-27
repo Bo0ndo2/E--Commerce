@@ -1,16 +1,8 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useProduct } from '../../hooks/useProducts';
-import { useCart } from '../Cart/CartContext';
-import { useAuth } from '../Auth/useAuth';
-import { useToast } from '../Toast/Toast';
+import { useAuth, useCart, useProduct, useToast } from '../../hooks';
 
-/**
- * ProductDetails Component
- * - عرض تفاصيل المنتج كاملة
- * - إضافة المنتج للـ Cart (مع التحقق من Login)
- * - Quantity Selection
- */
+
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();

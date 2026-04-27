@@ -1,7 +1,6 @@
 import React from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import './App.css'
 import RootLayout from './components/Layout/RootLayout'
 import Home from './components/Home/Home'
 import Login from './components/Auth/Login'
@@ -9,7 +8,6 @@ import ProtectedRoute from './components/Auth/ProtectedRoute'
 import Register from './components/Auth/Register'
 import { AuthContextProvider } from './components/Auth/AuthContext'
 import Cart from './components/Cart/Cart'
-import CartContextProvider from './components/Cart/CartContext'
 import Checkout from './components/Checkout/Checkout'
 import Orders from './components/Orders/Order'
 import { ToastProvider } from './components/Toast/Toast'
@@ -77,11 +75,9 @@ function App() {
   return (
     <AuthContextProvider>
       <ToastProvider>
-        <CartContextProvider>
-          <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-          </QueryClientProvider>
-        </CartContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
       </ToastProvider>
     </AuthContextProvider>
 
